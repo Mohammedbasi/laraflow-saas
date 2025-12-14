@@ -4,8 +4,8 @@ namespace App\Models\Traits;
 
 use App\Models\Scopes\TenantScope;
 use App\Models\Tenant;
+use App\Support\Tenancy\TenantManager;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Auth;
 
 trait BelongsToTenant
 {
@@ -19,9 +19,12 @@ trait BelongsToTenant
 
         // Automatically set tenant_id when creating a new record
         static::creating(function ($model) {
-            if (Auth::check()) {
-                $model->tenant_id = Auth::user()->tenant_id;
+            $tenancy = app(TenantManager::class);
+
+            if ($tenancy->hasTenant() && empty($model->tenant_id)) {
+                $model->tenant_id = $tenancy->tenantId();
             }
+
         });
     }
 
