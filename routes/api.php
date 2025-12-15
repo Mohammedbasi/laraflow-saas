@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware(['auth:sanctum', 'tenant.context'])->group(function () {
-        // Route::apiResource('projects', ProjectController::class);
+
+        Route::apiResource('projects', ProjectController::class);
         // tasks later
     });
 });
