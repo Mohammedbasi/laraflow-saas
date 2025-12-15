@@ -6,6 +6,7 @@ use App\Support\Tenancy\TenantManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Support\Facades\Auth;
 
 class TenantScope implements Scope
 {
@@ -13,6 +14,11 @@ class TenantScope implements Scope
     {
         $tenancy = app(TenantManager::class);
 
+        // Failsafe: if middleware didn't run but user is authenticated,
+        // still apply tenant isolation.
+        if (! $tenancy->hasTenant() && Auth::check()) {
+            $tenancy->setTenantId(Auth::user()->tenant_id);
+        }
         // If tenant is not set, do nothing (for super-admin, console, etc.)
         if (! $tenancy->hasTenant()) {
             return;
