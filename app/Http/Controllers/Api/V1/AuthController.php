@@ -36,8 +36,8 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $result['token'],
-            'tenant' => new TenantResource($result['tenant']),
-            'user' => new UserResource($result['user']),
+            'tenant' => (new TenantResource($result['tenant']))->resolve(),
+            'user' => (new UserResource($result['user']))->resolve(),
         ], 201);
     }
 
