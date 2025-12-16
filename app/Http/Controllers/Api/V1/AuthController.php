@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Auth\LoginAction;
 use App\Actions\Auth\LogoutAction;
+use App\Actions\Tenant\RegisterTenantAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterTenantRequest;
+use App\Http\Resources\TenantResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 
@@ -25,6 +28,17 @@ class AuthController extends Controller
             'token' => $result['token'],
             'user' => new UserResource($result['user']),
         ]);
+    }
+
+    public function register(RegisterTenantRequest $request, RegisterTenantAction $action)
+    {
+        $result = $action->execute($request->validated());
+
+        return response()->json([
+            'token' => $result['token'],
+            'tenant' => new TenantResource($result['tenant']),
+            'user' => new UserResource($result['user']),
+        ], 201);
     }
 
     public function me(Request $request)
