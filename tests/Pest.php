@@ -11,6 +11,11 @@
 |
 */
 
+use App\Actions\Tenant\EnsureTenantRolesAction;
+use App\Models\User;
+use App\Support\Tenancy\TenantManager;
+use Spatie\Permission\PermissionRegistrar;
+
 pest()->extend(Tests\TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
@@ -44,4 +49,26 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+function apiAs(User $user)
+{
+    // Ensure tenant context exists
+    app(TenantManager::class)->setTenantId($user->tenant_id);
+
+    // Ensure Spatie team context exists (roles are tenant-scoped)
+    app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+
+    return test()
+        ->actingAs($user, 'web')
+        ->withHeader('Accept', 'application/json');
+}
+
+function ensureTenantRoles(int $tenantId): void
+{
+    // Set team context first (required when teams enabled)
+    app(PermissionRegistrar::class)->setPermissionsTeamId($tenantId);
+
+    // Create roles for this tenant if missing
+    app(EnsureTenantRolesAction::class)->execute($tenantId);
 }

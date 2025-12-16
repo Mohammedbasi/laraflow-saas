@@ -9,13 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-function apiAs(User $user)
-{
-    app(TenantManager::class)->setTenantId($user->tenant_id);
 
-    return test()->actingAs($user, 'sanctum')
-        ->withHeader('Accept', 'application/json');
-}
 it('lists only projects for the authenticated user tenant', function () {
     $tenantA = Tenant::factory()->create();
     $tenantB = Tenant::factory()->create();
