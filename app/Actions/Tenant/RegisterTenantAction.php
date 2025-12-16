@@ -6,6 +6,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\PermissionRegistrar;
 
 class RegisterTenantAction
 {
@@ -30,6 +31,15 @@ class RegisterTenantAction
 
             // 3) Update tenant owner_id
             $tenant->update(['owner_id' => $user->id]);
+
+            // IMPORTANT: set tenant context for Spatie
+            app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
+
+            // Ensure default tenant roles exist
+            app(EnsureTenantRolesAction::class)->execute($tenant->id);
+
+            // Assign owner role
+            $user->assignRole('tenant_admin');
 
             // 4) Create token
             $token = $user->createToken($data['device_name'] ?? 'api')->plainTextToken;
