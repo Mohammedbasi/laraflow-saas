@@ -31,7 +31,7 @@ class CompleteInvitationAction
             ]);
         }
 
-        if (! hash_equals($invitation->token_hash, hash('sha256', $plainToken))) {
+        if (! hash_equals($invitation->token, hash('sha256', $plainToken))) {
             throw ValidationException::withMessages([
                 'token' => ['Invalid invitation token.'],
             ]);
