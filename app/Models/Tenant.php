@@ -11,7 +11,7 @@ class Tenant extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'domain', 'owner_id', 'plan_type'];
+    protected $fillable = ['name', 'domain', 'owner_id', 'plan_type', 'is_suspended'];
 
     public function users(): HasMany
     {
