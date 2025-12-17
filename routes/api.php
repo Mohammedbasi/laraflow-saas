@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +28,17 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'tenant.context'])->group(function () {
 
+        Route::post('/invitations', [InvitationController::class, 'store']);
+
         Route::apiResource('projects', ProjectController::class);
         // tasks later
     });
+
+    // Public: signed accept link
+    Route::get('/invitations/{invitation}/accept', [InvitationController::class, 'accept'])
+        ->name('invitations.accept')
+        ->middleware('signed');
+
+    // Public: complete invitation (creates user)
+    Route::post('/invitations/complete', [InvitationController::class, 'complete']);
 });
