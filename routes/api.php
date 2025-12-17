@@ -28,7 +28,8 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'tenant.context'])->group(function () {
 
-        Route::post('/invitations', [InvitationController::class, 'store']);
+        Route::post('/invitations', [InvitationController::class, 'store'])
+            ->middleware('role:tenant_admin');
 
         Route::apiResource('projects', ProjectController::class);
         // tasks later
