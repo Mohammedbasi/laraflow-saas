@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
@@ -10,15 +11,17 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::prefix('v1/admin')
+    ->middleware(['auth:sanctum', 'tenant.context', 'role:super_admin'])
+    ->group(function () {
+        Route::get('/tenants', [TenantAdminController::class, 'index']);
+        Route::get('/tenants/{tenant}', [TenantAdminController::class, 'show']);
+        Route::patch('/tenants/{tenant}', [TenantAdminController::class, 'update']);
+        Route::post('/tenants/{tenant}/suspend', [TenantAdminController::class, 'suspend']);
+        Route::post('/tenants/{tenant}/activate', [TenantAdminController::class, 'activate']);
+    });
+
 Route::prefix('v1')->group(function () {
-    Route::prefix('admin')
-        ->middleware(['auth:sanctum', 'tenant.context', 'role:super_admin'])
-        ->group(function () {
-            // examples:
-            // GET /tenants
-            // GET /tenants/{tenant}
-            // GET /tenants/{tenant}/users
-        });
 
     Route::prefix('auth')->group(function () {
 
