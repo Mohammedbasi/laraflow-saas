@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Support\Tenancy\TenantManager;
 use Closure;
 use Illuminate\Http\Request;
+use Spatie\Permission\PermissionRegistrar;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetTenantFromAuthenticatedUser
@@ -22,6 +23,10 @@ class SetTenantFromAuthenticatedUser
         $user = $request->user();
 
         $tenancy->setTenantId($user?->tenant_id);
+
+        if ($user?->tenant_id) {
+            app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+        }
 
         return $next($request);
     }
