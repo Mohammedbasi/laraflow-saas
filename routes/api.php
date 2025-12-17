@@ -34,7 +34,7 @@ Route::prefix('v1')->group(function () {
         });
     });
 
-    Route::middleware(['auth:sanctum', 'tenant.context'])->group(function () {
+    Route::middleware(['auth:sanctum', 'tenant.context', 'tenant.not_suspended'])->group(function () {
 
         Route::post('/invitations', [InvitationController::class, 'store'])
             ->middleware('role:tenant_admin');
