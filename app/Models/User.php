@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'tenant_id',
+        'is_active',
     ];
 
     /**
@@ -48,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 }
