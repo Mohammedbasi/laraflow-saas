@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
+use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
@@ -19,6 +20,16 @@ Route::prefix('v1/admin')
         Route::patch('/tenants/{tenant}', [TenantAdminController::class, 'update']);
         Route::post('/tenants/{tenant}/suspend', [TenantAdminController::class, 'suspend']);
         Route::post('/tenants/{tenant}/activate', [TenantAdminController::class, 'activate']);
+
+        Route::get('/users', [UserAdminController::class, 'index']);
+        Route::get('/users/{user}', [UserAdminController::class, 'show']);
+        Route::patch('/users/{user}', [UserAdminController::class, 'update']);
+
+        Route::put('/users/{user}/roles', [UserAdminController::class, 'setRoles']);
+
+        Route::post('/users/{user}/deactivate', [UserAdminController::class, 'deactivate']);
+        Route::post('/users/{user}/activate', [UserAdminController::class, 'activate']);
+
     });
 
 Route::prefix('v1')->group(function () {
