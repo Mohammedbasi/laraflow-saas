@@ -11,6 +11,14 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function () {
+    Route::prefix('admin')
+        ->middleware(['auth:sanctum', 'tenant.context', 'role:super_admin'])
+        ->group(function () {
+            // examples:
+            // GET /tenants
+            // GET /tenants/{tenant}
+            // GET /tenants/{tenant}/users
+        });
 
     Route::prefix('auth')->group(function () {
 
