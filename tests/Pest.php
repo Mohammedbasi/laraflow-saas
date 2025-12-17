@@ -53,11 +53,14 @@ function something()
 
 function apiAs(User $user)
 {
+    $platformTeamId = config('laraflow.platform_team_id', 0);
+    $teamId = $user->tenant_id ?? $platformTeamId;
+
     // Ensure tenant context exists
     app(TenantManager::class)->setTenantId($user->tenant_id);
 
     // Ensure Spatie team context exists (roles are tenant-scoped)
-    app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+    app(PermissionRegistrar::class)->setPermissionsTeamId($teamId);
 
     return test()
         ->actingAs($user, 'sanctum')
