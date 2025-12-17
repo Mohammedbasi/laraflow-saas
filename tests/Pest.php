@@ -60,7 +60,7 @@ function apiAs(User $user)
     app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
 
     return test()
-        ->actingAs($user, 'web')
+        ->actingAs($user, 'sanctum')
         ->withHeader('Accept', 'application/json');
 }
 
