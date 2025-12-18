@@ -11,6 +11,7 @@
 |
 */
 
+use App\Actions\Auth\EnsureRolesAction;
 use App\Actions\Tenant\EnsureTenantRolesAction;
 use App\Models\User;
 use App\Support\Tenancy\TenantManager;
@@ -74,4 +75,15 @@ function ensureTenantRoles(int $tenantId): void
 
     // Create roles for this tenant if missing
     app(EnsureTenantRolesAction::class)->execute($tenantId);
+}
+
+function makeSuperAdminUser(): User
+{
+    app(EnsureRolesAction::class)->ensureGlobal();
+    app(PermissionRegistrar::class)->setPermissionsTeamId(config('laraflow.platform_team_id', 0));
+
+    $u = User::factory()->create(['tenant_id' => null]);
+    $u->assignRole('super_admin');
+
+    return $u;
 }

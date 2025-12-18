@@ -8,21 +8,12 @@ use Spatie\Permission\PermissionRegistrar;
 
 uses(RefreshDatabase::class);
 
-function makeSuperAdmin(): User
-{
-    app(EnsureRolesAction::class)->ensureGlobal();
-    app(PermissionRegistrar::class)->setPermissionsTeamId(config('laraflow.platform_team_id', 0));
 
-    $u = User::factory()->create(['tenant_id' => null]);
-    $u->assignRole('super_admin');
-
-    return $u;
-}
 
 it('allows super_admin to list tenants', function () {
     Tenant::factory()->count(3)->create();
 
-    $admin = makeSuperAdmin();
+    $admin = makeSuperAdminUser();
 
     apiAs($admin)
         ->getJson('/api/v1/admin/tenants')
