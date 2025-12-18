@@ -87,13 +87,25 @@ class ImpersonationController extends Controller
      */
     public function stop(Request $request)
     {
-        $token = $request->user()?->currentAccessToken();
-
-        if (! $token) {
-            return response()->json(['message' => 'No access token found.'], 401);
+        $authUser = $request->user();
+        if (! $authUser) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        // Only revoke if it is an impersonation token
+        // Parse token id from the Authorization header token
+        $bearer = $request->bearerToken();
+        if (! $bearer || ! str_contains($bearer, '|')) {
+            return response()->json(['message' => 'Invalid token format.'], 422);
+        }
+
+        [$tokenId] = explode('|', $bearer, 2);
+
+        $token = PersonalAccessToken::find($tokenId);
+
+        if (! $token) {
+            return response()->json(['message' => 'Token not found.'], 404);
+        }
+
         if (! $token->impersonated_by_user_id) {
             return response()->json(['message' => 'Not an impersonation token.'], 422);
         }
