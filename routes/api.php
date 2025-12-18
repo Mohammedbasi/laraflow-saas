@@ -45,8 +45,11 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('auth')->group(function () {
 
-        Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login'])
+            ->middleware('throttle:auth-login');
+
+        Route::post('/register', [AuthController::class, 'register'])
+            ->middleware('throttle:auth-register');
 
         Route::middleware(['auth:sanctum', 'tenant.context'])->group(function () {
 
@@ -59,7 +62,8 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'tenant.context', 'tenant.not_suspended', 'user.active'])->group(function () {
 
-        Route::post('/invitations', [InvitationController::class, 'store']);
+        Route::post('/invitations', [InvitationController::class, 'store'])
+            ->middleware('throttle:invitations');
 
         Route::apiResource('projects', ProjectController::class);
         Route::get('/activities', [ActivityController::class, 'index']);
