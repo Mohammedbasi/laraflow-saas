@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\ImpersonationController;
 use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
@@ -30,7 +31,11 @@ Route::prefix('v1/admin')
         Route::post('/users/{user}/deactivate', [UserAdminController::class, 'deactivate']);
         Route::post('/users/{user}/activate', [UserAdminController::class, 'activate']);
 
+        Route::post('/impersonations/start', [ImpersonationController::class, 'start']);
     });
+    
+Route::post('/v1/impersonations/stop', [ImpersonationController::class, 'stop'])
+    ->middleware(['auth:sanctum']);
 
 Route::prefix('v1')->group(function () {
 
