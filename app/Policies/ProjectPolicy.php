@@ -4,19 +4,11 @@ namespace App\Policies;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Support\Tenancy\TenantManager;
 use Spatie\Permission\PermissionRegistrar;
 
 class ProjectPolicy
 {
-    private function isSuperAdmin(User $user): bool
-    {
-        app(PermissionRegistrar::class)->setPermissionsTeamId(
-            config('laraflow.platform_team_id', 0)
-        );
-
-        return $user->hasRole('super_admin');
-    }
-
     /**
      * Anyone in the tenant can view projects (we’ll refine later if needed).
      */
@@ -38,38 +30,45 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        if ($this->isSuperAdmin($user)) {
+
+        if (app(TenantManager::class)->isSuperAdmin()) {
             return true;
         }
-        $this->setTeam($user);
+
+        // IMPORTANT: set tenant team context before role check
+        app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+
+        $user->unsetRelation('roles');
+        $user->unsetRelation('permissions');
 
         return $user->hasRole('tenant_admin');
     }
 
     public function update(User $user, Project $project): bool
     {
-        if ($this->isSuperAdmin($user)) {
+        if (app(TenantManager::class)->isSuperAdmin()) {
             return true;
         }
-        $this->setTeam($user);
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+
+        $user->unsetRelation('roles');
+        $user->unsetRelation('permissions');
 
         return $user->hasRole('tenant_admin');
     }
 
     public function delete(User $user, Project $project): bool
     {
-        if ($this->isSuperAdmin($user)) {
+        if (app(TenantManager::class)->isSuperAdmin()) {
             return true;
         }
 
-        $this->setTeam($user);
+        app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+
+        $user->unsetRelation('roles');
+        $user->unsetRelation('permissions');
 
         return $user->hasRole('tenant_admin');
-    }
-
-    // Because we enabled Spatie “teams” and roles are tenant-scoped.
-    private function setTeam(User $user): void
-    {
-        app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
     }
 }

@@ -30,15 +30,21 @@ class SetTenantFromAuthenticatedUser
             return $next($request);
         }
 
-        // Check super_admin in platform team context ONCE
-        app(PermissionRegistrar::class)->setPermissionsTeamId($platformTeamId);
+        $registrar = app(PermissionRegistrar::class);
+
+        // 1) Check super_admin under PLATFORM team context
+        $registrar->setPermissionsTeamId($platformTeamId);
+
+        // IMPORTANT: clear cached relations so hasRole checks the correct team context
+        $user->unsetRelation('roles');
+        $user->unsetRelation('permissions');
 
         if ($user->hasRole('super_admin')) {
             $tenancy->setSuperAdmin(true);
             $tenancy->setTenantId(null);
 
-            // keep registrar on platform team if you want
-            app(PermissionRegistrar::class)->setPermissionsTeamId($platformTeamId);
+            // keep registrar on platform team
+            $registrar->setPermissionsTeamId($platformTeamId);
 
             return $next($request);
         }
@@ -47,7 +53,11 @@ class SetTenantFromAuthenticatedUser
         $tenancy->setTenantId($user->tenant_id);
 
         if ($user->tenant_id) {
-            app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+            $registrar->setPermissionsTeamId($user->tenant_id);
+            
+            // IMPORTANT: clear cached relations again so tenant role checks work
+            $user->unsetRelation('roles');
+            $user->unsetRelation('permissions');
         }
 
         return $next($request);

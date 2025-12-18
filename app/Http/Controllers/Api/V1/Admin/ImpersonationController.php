@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Audit\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -65,6 +66,19 @@ class ImpersonationController extends Controller
             'expires_at' => now()->addMinutes($ttl),
         ])->save();
 
+        app(AuditLogger::class)->log(
+            tenantId: $target->tenant_id,              // audit under tenant being accessed
+            causerId: $target->id,                     // "acting as" user (target)
+            impersonatedByUserId: $superAdmin->id,     // super admin who initiated
+            subject: $target,                          // or null; but target is useful
+            description: 'Impersonation started',
+            meta: [
+                'impersonation_token_id' => $tokenRow->id,
+                'super_admin_id' => $superAdmin->id,
+                'target_user_id' => $target->id,
+            ]
+        );
+
         return response()->json([
             'token' => $token->plainTextToken,
             'impersonated_user' => [
@@ -109,6 +123,17 @@ class ImpersonationController extends Controller
         if (! $token->impersonated_by_user_id) {
             return response()->json(['message' => 'Not an impersonation token.'], 422);
         }
+
+        app(AuditLogger::class)->log(
+            tenantId: $request->user()->tenant_id,
+            causerId: $request->user()->id,
+            impersonatedByUserId: $token->impersonated_by_user_id,
+            subject: $request->user(),
+            description: 'Impersonation stopped',
+            meta: [
+                'impersonation_token_id' => $token->id,
+            ]
+        );
 
         $token->delete();
 
