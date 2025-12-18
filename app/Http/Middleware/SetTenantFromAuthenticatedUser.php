@@ -23,6 +23,7 @@ class SetTenantFromAuthenticatedUser
 
         // default
         $tenancy->setSuperAdmin(false);
+        $tenancy->setTenantId(null);
 
         if (! $user) {
             $tenancy->setTenantId(null);
@@ -54,7 +55,7 @@ class SetTenantFromAuthenticatedUser
 
         if ($user->tenant_id) {
             $registrar->setPermissionsTeamId($user->tenant_id);
-            
+
             // IMPORTANT: clear cached relations again so tenant role checks work
             $user->unsetRelation('roles');
             $user->unsetRelation('permissions');
