@@ -8,6 +8,15 @@ use Spatie\Permission\PermissionRegistrar;
 
 class ProjectPolicy
 {
+    private function isSuperAdmin(User $user): bool
+    {
+        app(PermissionRegistrar::class)->setPermissionsTeamId(
+            config('laraflow.platform_team_id', 0)
+        );
+
+        return $user->hasRole('super_admin');
+    }
+
     /**
      * Anyone in the tenant can view projects (we’ll refine later if needed).
      */
@@ -29,6 +38,9 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         $this->setTeam($user);
 
         return $user->hasRole('tenant_admin');
@@ -36,6 +48,9 @@ class ProjectPolicy
 
     public function update(User $user, Project $project): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
         $this->setTeam($user);
 
         return $user->hasRole('tenant_admin');
@@ -43,11 +58,14 @@ class ProjectPolicy
 
     public function delete(User $user, Project $project): bool
     {
+        if ($this->isSuperAdmin($user)) {
+            return true;
+        }
+
         $this->setTeam($user);
 
         return $user->hasRole('tenant_admin');
     }
-
 
     // Because we enabled Spatie “teams” and roles are tenant-scoped.
     private function setTeam(User $user): void
