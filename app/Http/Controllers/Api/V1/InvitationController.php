@@ -45,7 +45,7 @@ class InvitationController extends Controller
 
         return response()->json([
             'message' => 'Invitation sent.',
-            // 'invite_url' => $inviteUrl, // temporarily include for testing
+            'invite_url' => $inviteUrl, // temporarily include for testing
         ], 201);
     }
 

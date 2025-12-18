@@ -2,6 +2,7 @@
 
 namespace App\Actions\Tenant;
 
+use App\Actions\Auth\EnsureRolesAction;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -36,10 +37,14 @@ class RegisterTenantAction
             app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
 
             // Ensure default tenant roles exist
-            app(EnsureTenantRolesAction::class)->execute($tenant->id);
+            app(EnsureRolesAction::class)->ensureTenant($tenant->id);
+            $user->unsetRelation('roles');
+            $user->unsetRelation('permissions');
 
             // Assign owner role
             $user->assignRole('tenant_admin');
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
 
             // 4) Create token
             $token = $user->createToken($data['device_name'] ?? 'api')->plainTextToken;

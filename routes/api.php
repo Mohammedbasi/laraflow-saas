@@ -33,7 +33,7 @@ Route::prefix('v1/admin')
 
         Route::post('/impersonations/start', [ImpersonationController::class, 'start']);
     });
-    
+
 Route::post('/v1/impersonations/stop', [ImpersonationController::class, 'stop'])
     ->middleware(['auth:sanctum']);
 
@@ -55,8 +55,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'tenant.context', 'tenant.not_suspended', 'user.active'])->group(function () {
 
-        Route::post('/invitations', [InvitationController::class, 'store'])
-            ->middleware('role:tenant_admin');
+        Route::post('/invitations', [InvitationController::class, 'store']);
 
         Route::apiResource('projects', ProjectController::class);
         // tasks later
