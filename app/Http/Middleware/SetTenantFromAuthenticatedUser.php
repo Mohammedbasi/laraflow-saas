@@ -19,20 +19,35 @@ class SetTenantFromAuthenticatedUser
         $user = $request->user();
         $platformTeamId = config('laraflow.platform_team_id', 0);
 
-        // 1) Check super_admin in platform team context
-        app(PermissionRegistrar::class)->setPermissionsTeamId($platformTeamId);
+        $tenancy = app(TenantManager::class);
 
-        if ($user && $user->hasRole('super_admin')) {
-            // Super admin: no tenant scoping
-            app(TenantManager::class)->setTenantId(null);
+        // default
+        $tenancy->setSuperAdmin(false);
+
+        if (! $user) {
+            $tenancy->setTenantId(null);
 
             return $next($request);
         }
 
-        // 2) Normal tenant user: set tenant/team context
-        if ($user?->tenant_id) {
+        // Check super_admin in platform team context ONCE
+        app(PermissionRegistrar::class)->setPermissionsTeamId($platformTeamId);
+
+        if ($user->hasRole('super_admin')) {
+            $tenancy->setSuperAdmin(true);
+            $tenancy->setTenantId(null);
+
+            // keep registrar on platform team if you want
+            app(PermissionRegistrar::class)->setPermissionsTeamId($platformTeamId);
+
+            return $next($request);
+        }
+
+        // Normal tenant user
+        $tenancy->setTenantId($user->tenant_id);
+
+        if ($user->tenant_id) {
             app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
-            app(TenantManager::class)->setTenantId($user->tenant_id);
         }
 
         return $next($request);
