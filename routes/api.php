@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Billing\BillingController;
+use App\Http\Controllers\Api\V1\Billing\StripeWebhookController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use Illuminate\Http\Request;
@@ -80,6 +81,7 @@ Route::prefix('v1')->group(function () {
 
     Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
         ->middleware([VerifyWebhookSignature::class]);
+        
     // Public: signed accept link
     Route::get('/invitations/{invitation}/accept', [InvitationController::class, 'accept'])
         ->name('invitations.accept')
