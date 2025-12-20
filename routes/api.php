@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Cashier\Http\Middleware\VerifyWebhookSignature;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -62,6 +63,14 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'tenant.context', 'tenant.not_suspended', 'user.active'])->group(function () {
 
+        Route::get('billing/status', [BillingController::class, 'status']);
+
+        Route::post('billing/checkout', [BillingController::class, 'checkout'])
+            ->middleware('billing.manage'); // custom middleware (tenant_admin/super_admin)
+
+        Route::post('billing/portal', [BillingController::class, 'portal'])
+            ->middleware('billing.manage');
+
         Route::post('/invitations', [InvitationController::class, 'store'])
             ->middleware('throttle:invitations');
 
@@ -70,6 +79,8 @@ Route::prefix('v1')->group(function () {
         // tasks later
     });
 
+    Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
+        ->middleware([VerifyWebhookSignature::class]);
     // Public: signed accept link
     Route::get('/invitations/{invitation}/accept', [InvitationController::class, 'accept'])
         ->name('invitations.accept')
