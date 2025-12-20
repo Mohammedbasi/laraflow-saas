@@ -70,9 +70,8 @@ Route::prefix('v1')->group(function () {
 
         Route::post('billing/portal', [BillingController::class, 'portal']);
 
-        
         Route::post('/invitations', [InvitationController::class, 'store'])
-            ->middleware('throttle:invitations');
+            ->middleware(['subscription.limit', 'throttle:invitations']);
 
         Route::apiResource('projects', ProjectController::class);
         Route::get('/activities', [ActivityController::class, 'index']);
@@ -88,4 +87,5 @@ Route::prefix('v1')->group(function () {
 
     // Public: complete invitation (creates user)
     Route::post('/invitations/complete', [InvitationController::class, 'complete']);
+
 });

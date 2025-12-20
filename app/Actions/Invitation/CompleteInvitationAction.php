@@ -2,6 +2,7 @@
 
 namespace App\Actions\Invitation;
 
+use App\Actions\Billing\EnforceTenantUserLimitAction;
 use App\Actions\Tenant\EnsureTenantRolesAction;
 use App\Models\Invitation;
 use App\Models\User;
@@ -45,6 +46,9 @@ class CompleteInvitationAction
                     'email' => ['A user with this email already exists.'],
                 ]);
             }
+
+            // Enforce plan limit for PUBLIC completion route
+            app(EnforceTenantUserLimitAction::class)->execute($invitation->tenant_id);
 
             $user = User::create([
                 'tenant_id' => $invitation->tenant_id,
