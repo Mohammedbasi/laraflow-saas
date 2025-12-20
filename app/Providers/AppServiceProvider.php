@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Models\Project;
+use App\Models\Tenant;
 use App\Observers\ProjectObserver;
 use App\Support\Tenancy\TenantManager;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cashier::useCustomerModel(Tenant::class);
+        
         Project::observe(ProjectObserver::class);
         RateLimiter::for('auth-login', function (Request $request) {
             // Per IP + email to reduce brute-force
