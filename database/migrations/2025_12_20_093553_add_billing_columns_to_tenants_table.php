@@ -12,8 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tenants', function (Blueprint $table) {
-            // Plan type is our “business” flag; actual access is derived from Cashier subscription state.
-            $table->string('plan_type')->default('free')->index(); // free|paid
 
             // Cashier customer fields (since Tenant becomes the billable model)
             $table->string('stripe_id')->nullable()->index();
