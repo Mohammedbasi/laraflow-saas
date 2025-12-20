@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\Activity;
 use App\Models\Invitation;
 use App\Models\Project;
+use App\Models\Tenant;
 use App\Policies\ActivityPolicy;
 use App\Policies\InvitationPolicy;
 use App\Policies\ProjectPolicy;
+use App\Policies\TenantBillingPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -16,5 +18,6 @@ class AuthServiceProvider extends ServiceProvider
         Project::class => ProjectPolicy::class,
         Invitation::class => InvitationPolicy::class,
         Activity::class => ActivityPolicy::class,
+        Tenant::class => TenantBillingPolicy::class,
     ];
 }

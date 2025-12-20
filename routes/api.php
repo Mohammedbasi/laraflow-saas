@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\ImpersonationController;
 use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\Billing\BillingController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use Illuminate\Http\Request;
@@ -65,12 +66,11 @@ Route::prefix('v1')->group(function () {
 
         Route::get('billing/status', [BillingController::class, 'status']);
 
-        Route::post('billing/checkout', [BillingController::class, 'checkout'])
-            ->middleware('billing.manage'); // custom middleware (tenant_admin/super_admin)
+        Route::post('billing/checkout', [BillingController::class, 'checkout']);
 
-        Route::post('billing/portal', [BillingController::class, 'portal'])
-            ->middleware('billing.manage');
+        Route::post('billing/portal', [BillingController::class, 'portal']);
 
+        
         Route::post('/invitations', [InvitationController::class, 'store'])
             ->middleware('throttle:invitations');
 
