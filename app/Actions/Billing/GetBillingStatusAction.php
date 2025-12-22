@@ -27,6 +27,7 @@ class GetBillingStatusAction
         return [
             'tenant_id' => $tenant->id,
             'plan_type' => $tenant->plan_type ?? 'free',
+            'effective_plan' => $isPaidEffective ? 'paid' : 'free',
             'free_plan_user_limit' => $limit,
             'user_count' => $userCount,
 
