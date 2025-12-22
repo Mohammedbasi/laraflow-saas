@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Cashier::useCustomerModel(Tenant::class);
-        
+
         Project::observe(ProjectObserver::class);
         RateLimiter::for('auth-login', function (Request $request) {
             // Per IP + email to reduce brute-force
@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
             // per user (or per tenant) to prevent spam/invite abuse
             $userId = $request->user()?->id ?? 'guest';
 
-            return Limit::perMinute(1)->by('invites:'.$userId);
+            return Limit::perMinute(5)->by('invites:'.$userId);
         });
     }
 }
