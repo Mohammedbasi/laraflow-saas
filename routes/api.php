@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\ActivityController;
 use App\Http\Controllers\Api\V1\Admin\ActivityAdminController;
+use App\Http\Controllers\Api\V1\Admin\AdminBillingController;
 use App\Http\Controllers\Api\V1\Admin\ImpersonationController;
 use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
@@ -39,6 +40,9 @@ Route::prefix('v1/admin')
         Route::post('/impersonations/start', [ImpersonationController::class, 'start']);
 
         Route::get('/activities', [ActivityAdminController::class, 'index']);
+
+        Route::get('tenants/{tenant}/billing/status', [AdminBillingController::class, 'status']);
+        Route::post('tenants/{tenant}/billing/portal', [AdminBillingController::class, 'portal']);
     });
 
 Route::post('/v1/impersonations/stop', [ImpersonationController::class, 'stop'])
@@ -81,7 +85,7 @@ Route::prefix('v1')->group(function () {
 
     Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
         ->middleware([VerifyWebhookSignature::class]);
-        
+
     // Public: signed accept link
     Route::get('/invitations/{invitation}/accept', [InvitationController::class, 'accept'])
         ->name('invitations.accept')
