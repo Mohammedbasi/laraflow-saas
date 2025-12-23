@@ -62,4 +62,17 @@ class TaskPolicy
     {
         return $this->update($user, $task);
     }
+
+    public function reorder(User $user, Project $project): bool
+    {
+        if ($user->tenant_id !== $project->tenant_id) {
+            return false;
+        }
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId($user->tenant_id);
+        $user->unsetRelation('roles');
+        $user->unsetRelation('permissions');
+
+        return $user->hasRole('tenant_admin');
+    }
 }
