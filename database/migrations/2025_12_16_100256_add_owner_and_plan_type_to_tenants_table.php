@@ -18,7 +18,6 @@ return new class extends Migration
                 ->nullOnDelete()
                 ->after('domain');
 
-            $table->string('plan_type')->default('free')->after('owner_id'); // free / paid later
         });
     }
 
@@ -29,7 +28,6 @@ return new class extends Migration
     {
         Schema::table('tenants', function (Blueprint $table) {
             $table->dropConstrainedForeignId('owner_id');
-            $table->dropColumn('plan_type');
         });
     }
 };
