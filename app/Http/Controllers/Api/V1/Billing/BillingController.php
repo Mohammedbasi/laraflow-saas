@@ -14,6 +14,9 @@ class BillingController extends Controller
     public function status(Request $request, GetBillingStatusAction $action)
     {
         $user = $request->user();
+
+        abort_if(! $user->tenant_id, 403, 'Billing status is tenant-scoped.');
+
         $tenant = Tenant::findOrFail($user->tenant_id);
 
         // tenant admins only
@@ -27,6 +30,9 @@ class BillingController extends Controller
     public function checkout(Request $request, CreateCheckoutSessionAction $action)
     {
         $user = $request->user();
+
+        abort_if(! $user->tenant_id, 403, 'Billing is tenant-scoped.');
+
         $tenant = Tenant::findOrFail($user->tenant_id);
 
         // tenant admins only
@@ -40,6 +46,9 @@ class BillingController extends Controller
     public function portal(Request $request, CreateBillingPortalAction $action)
     {
         $user = $request->user();
+
+        abort_if(! $user->tenant_id, 403, 'Billing is tenant-scoped.');
+
         $tenant = Tenant::findOrFail($user->tenant_id);
 
         $this->authorize('billing', $tenant);

@@ -12,9 +12,6 @@ class TenantBillingPolicy
 
     public function billing(User $user, Tenant $tenant): bool
     {
-        if (app(TenantManager::class)->isSuperAdmin()) {
-            return true;
-        }
 
         if ($user->tenant_id !== $tenant->id) {
             return false;
