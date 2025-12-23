@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\Billing\StripeWebhookController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\Task\TaskController;
+use App\Http\Controllers\Api\V1\Task\TaskReorderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Http\Middleware\VerifyWebhookSignature;
@@ -82,6 +83,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('projects', ProjectController::class);
         Route::apiResource('projects.tasks', TaskController::class)
             ->shallow();
+
+        // Drag & drop reorder endpoint
+        Route::post('projects/{project}/tasks/reorder', TaskReorderController::class);
 
         Route::get('/activities', [ActivityController::class, 'index']);
 
