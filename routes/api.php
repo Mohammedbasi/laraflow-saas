@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Billing\BillingController;
 use App\Http\Controllers\Api\V1\Billing\StripeWebhookController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
+use App\Http\Controllers\Api\V1\Task\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Http\Middleware\VerifyWebhookSignature;
@@ -79,8 +80,11 @@ Route::prefix('v1')->group(function () {
             ->middleware(['subscription.limit', 'throttle:invitations']);
 
         Route::apiResource('projects', ProjectController::class);
+        Route::apiResource('projects.tasks', TaskController::class)
+            ->shallow();
+
         Route::get('/activities', [ActivityController::class, 'index']);
-        // tasks later
+
     });
 
     Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
