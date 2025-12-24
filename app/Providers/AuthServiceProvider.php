@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Activity;
+use App\Models\Comment;
 use App\Models\Invitation;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Tenant;
 use App\Policies\ActivityPolicy;
+use App\Policies\CommentPolicy;
 use App\Policies\InvitationPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\TaskPolicy;
@@ -22,5 +24,6 @@ class AuthServiceProvider extends ServiceProvider
         Activity::class => ActivityPolicy::class,
         Tenant::class => TenantBillingPolicy::class,
         Task::class => TaskPolicy::class,
+        Comment::class => CommentPolicy::class,
     ];
 }
