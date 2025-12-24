@@ -2,6 +2,7 @@
 
 namespace App\Actions\Task;
 
+use App\Events\TaskUpdated;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -13,6 +14,7 @@ class ReorderTasksAction
 {
     public function execute(Project $project, array $moves, ?User $actor = null): void
     {
+        $updatedTaskIds = [];
         DB::transaction(function () use ($project, $moves, $actor) {
 
             $taskIds = collect($moves)->pluck('task_id')->unique()->values();
@@ -49,6 +51,8 @@ class ReorderTasksAction
                 $task->position = (int) $move['position'];
                 $task->save();
 
+                $updatedTaskIds[] = $task->id;
+
                 // Optional: log only if something changed
                 if (class_exists(AuditLogger::class) && $actor && ($fromStatus !== $task->status || $fromPos !== $task->position)) {
                     app(AuditLogger::class)->log(
@@ -67,6 +71,16 @@ class ReorderTasksAction
                     );
                 }
             }
+        });
+
+        // Broadcast AFTER commit with fresh state
+        DB::afterCommit(function () use ($updatedTaskIds) {
+            Task::query()
+                ->whereIn('id', $updatedTaskIds)
+                ->get()
+                ->each(function (Task $task) {
+                    event(new TaskUpdated($task, 'task.reordered'));
+                });
         });
     }
 }

@@ -6,10 +6,11 @@ use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TaskUpdated
+class TaskUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -31,6 +32,12 @@ class TaskUpdated
     public function broadcastOn(): array
     {
         $tenantId = (int) $this->task->tenant_id;
+
+        // logger()->info('Broadcasting TaskUpdated', [
+        //     'tenant_id' => $this->task->tenant_id,
+        //     'task_id' => $this->task->id,
+        //     'type' => $this->type,
+        // ]);
 
         return [new PrivateChannel("App.Models.Tenant.{$tenantId}")];
     }

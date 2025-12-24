@@ -20,9 +20,13 @@ use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\Task\TaskController;
 use App\Http\Controllers\Api\V1\Task\TaskReorderController;
+use Illuminate\Broadcasting\BroadcastController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Http\Middleware\VerifyWebhookSignature;
+
+Route::post('/broadcasting/auth', [BroadcastController::class, 'authenticate'])
+    ->middleware(['auth:sanctum', 'tenant.context']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();

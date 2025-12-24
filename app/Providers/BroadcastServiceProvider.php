@@ -21,9 +21,9 @@ class BroadcastServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // allow API token auth (Sanctum) and tenant context for channel auth.
-        Broadcast::routes([
-            'middleware' => ['auth:sanctum', 'tenant.context'],
-        ]);
+        // Broadcast::routes([
+        //     'middleware' => ['api', 'auth:sanctum', 'tenant.context'],
+        // ]);
 
         require base_path('routes/channels.php');
     }
