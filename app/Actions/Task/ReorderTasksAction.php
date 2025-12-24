@@ -2,7 +2,7 @@
 
 namespace App\Actions\Task;
 
-use App\Events\TaskUpdated;
+use App\Events\TasksReordered;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -74,13 +74,20 @@ class ReorderTasksAction
         });
 
         // Broadcast AFTER commit with fresh state
-        DB::afterCommit(function () use ($updatedTaskIds) {
-            Task::query()
+        DB::afterCommit(function () use ($project, $moves, $updatedTaskIds) {
+            $tasks = Task::query()
                 ->whereIn('id', $updatedTaskIds)
+                ->orderBy('status')
+                ->orderBy('position')
                 ->get()
-                ->each(function (Task $task) {
-                    event(new TaskUpdated($task, 'task.reordered'));
-                });
+                ->all();
+
+            event(new TasksReordered(
+                tenantId: (int) $project->tenant_id,
+                projectId: (int) $project->id,
+                tasks: $tasks,
+                moves: $moves
+            ));
         });
     }
 }
