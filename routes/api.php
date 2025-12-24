@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Billing\BillingController;
 use App\Http\Controllers\Api\V1\Billing\StripeWebhookController;
+use App\Http\Controllers\Api\V1\Comment\CommentController;
+use App\Http\Controllers\Api\V1\Comment\ProjectCommentController;
+use App\Http\Controllers\Api\V1\Comment\TaskCommentController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\Task\TaskController;
@@ -86,6 +89,16 @@ Route::prefix('v1')->group(function () {
 
         // Drag & drop reorder endpoint
         Route::post('projects/{project}/tasks/reorder', TaskReorderController::class);
+
+        // comments
+        Route::get('projects/{project}/comments', [ProjectCommentController::class, 'index']);
+        Route::post('projects/{project}/comments', [ProjectCommentController::class, 'store']);
+
+        Route::get('tasks/{task}/comments', [TaskCommentController::class, 'index']);
+        Route::post('tasks/{task}/comments', [TaskCommentController::class, 'store']);
+
+        Route::put('comments/{comment}', [CommentController::class, 'update']);
+        Route::delete('comments/{comment}', [CommentController::class, 'destroy']);
 
         Route::get('/activities', [ActivityController::class, 'index']);
 
