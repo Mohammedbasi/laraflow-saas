@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\V1\Admin\AdminBillingController;
 use App\Http\Controllers\Api\V1\Admin\ImpersonationController;
 use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
+use App\Http\Controllers\Api\V1\Attachment\AttachmentController;
+use App\Http\Controllers\Api\V1\Attachment\ProjectAttachmentController;
+use App\Http\Controllers\Api\V1\Attachment\TaskAttachmentController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Billing\BillingController;
 use App\Http\Controllers\Api\V1\Billing\StripeWebhookController;
@@ -99,6 +102,15 @@ Route::prefix('v1')->group(function () {
 
         Route::put('comments/{comment}', [CommentController::class, 'update']);
         Route::delete('comments/{comment}', [CommentController::class, 'destroy']);
+
+        // attachments
+        Route::get('projects/{project}/attachments', [ProjectAttachmentController::class, 'index']);
+        Route::post('projects/{project}/attachments', [ProjectAttachmentController::class, 'store']);
+
+        Route::get('tasks/{task}/attachments', [TaskAttachmentController::class, 'index']);
+        Route::post('tasks/{task}/attachments', [TaskAttachmentController::class, 'store']);
+
+        Route::delete('attachments/{media}', [AttachmentController::class, 'destroy']);
 
         Route::get('/activities', [ActivityController::class, 'index']);
 
