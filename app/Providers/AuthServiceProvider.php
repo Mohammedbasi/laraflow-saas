@@ -9,12 +9,14 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\Tenant;
 use App\Policies\ActivityPolicy;
+use App\Policies\AttachmentPolicy;
 use App\Policies\CommentPolicy;
 use App\Policies\InvitationPolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\TaskPolicy;
 use App\Policies\TenantBillingPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,5 +27,6 @@ class AuthServiceProvider extends ServiceProvider
         Tenant::class => TenantBillingPolicy::class,
         Task::class => TaskPolicy::class,
         Comment::class => CommentPolicy::class,
+        Media::class => AttachmentPolicy::class,
     ];
 }
