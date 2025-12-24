@@ -29,7 +29,7 @@ class UpdateTaskRequest extends FormRequest
             'status' => ['sometimes', 'required', 'string', Rule::in(Task::STATUSES)],
             'position' => ['sometimes', 'required', 'integer', 'min:1'],
             'due_at' => ['sometimes', 'nullable', 'date'],
-            'assignee_id' => ['sometimes', 'nullable', 'integer', 'exists:users,id'],
+            'assignee_id' => ['sometimes', 'nullable', 'integer'],
         ];
     }
 }

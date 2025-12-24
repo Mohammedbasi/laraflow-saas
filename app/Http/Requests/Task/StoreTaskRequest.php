@@ -28,7 +28,7 @@ class StoreTaskRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'status' => ['nullable', 'string', Rule::in(Task::STATUSES)],
             'due_at' => ['nullable', 'date'],
-            'assignee_id' => ['nullable', 'integer', 'exists:users,id'],
+            'assignee_id' => ['nullable', 'integer'],
         ];
     }
 }

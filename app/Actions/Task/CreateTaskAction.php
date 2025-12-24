@@ -4,6 +4,8 @@ namespace App\Actions\Task;
 
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class CreateTaskAction
 {
@@ -17,6 +19,16 @@ class CreateTaskAction
             ->max('position');
 
         $position = ($maxPosition ?: 0) + 1000;
+
+        if (! empty($data['assignee_id'])) {
+            $assignee = User::query()->whereKey($data['assignee_id'])->first();
+
+            if (! $assignee || (int) $assignee->tenant_id !== (int) $project->tenant_id) {
+                throw ValidationException::withMessages([
+                    'assignee_id' => ['Assignee must belong to the same tenant.'],
+                ]);
+            }
+        }
 
         return Task::create([
             'tenant_id' => $project->tenant_id,
