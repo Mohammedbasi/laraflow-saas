@@ -6,6 +6,7 @@ use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Task extends Model
 {
@@ -46,6 +47,11 @@ class Task extends Model
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id');
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function scopeForProject(Builder $q, int $projectId): Builder
