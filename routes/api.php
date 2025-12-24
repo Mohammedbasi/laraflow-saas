@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Admin\ImpersonationController;
 use App\Http\Controllers\Api\V1\Admin\TenantAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\Attachment\AttachmentController;
+use App\Http\Controllers\Api\V1\Attachment\AttachmentDownloadController;
 use App\Http\Controllers\Api\V1\Attachment\ProjectAttachmentController;
 use App\Http\Controllers\Api\V1\Attachment\TaskAttachmentController;
 use App\Http\Controllers\Api\V1\AuthController;
@@ -111,6 +112,9 @@ Route::prefix('v1')->group(function () {
         Route::post('tasks/{task}/attachments', [TaskAttachmentController::class, 'store']);
 
         Route::delete('attachments/{media}', [AttachmentController::class, 'destroy']);
+
+        Route::get('attachments/{media}/download', AttachmentDownloadController::class)
+            ->name('attachments.download');
 
         Route::get('/activities', [ActivityController::class, 'index']);
 

@@ -20,6 +20,14 @@ class AttachmentPolicy
         return null;
     }
 
+    public function view(User $user, Media $media): bool
+    {
+        $model = $media->model; // Project or Task
+        $tenantId = $model?->tenant_id;
+
+        return $tenantId && (int) $user->tenant_id === (int) $tenantId;
+    }
+
     public function viewProject(User $user, Project $project): bool
     {
         return $user->tenant_id === $project->tenant_id;

@@ -25,7 +25,7 @@ class AttachmentResource extends JsonResource
             'mime_type' => $this->mime_type,
             'size' => $this->size,
 
-            'url' => $this->getFullUrl(),
+            'download_url' => route('attachments.download', ['media' => $this->id]),
 
             'uploaded_by_user_id' => data_get($this->custom_properties, 'uploaded_by_user_id'),
 
