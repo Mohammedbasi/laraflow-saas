@@ -21,8 +21,16 @@ class StoreAttachmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $maxKb = (int) config('attachments.max_kb', 10240);
+        $mimes = (array) config('attachments.allowed_mimes', []);
+
         return [
-            'file' => ['required', 'file', 'max:10240'], // 10MB
+            'file' => [
+                'required',
+                'file',
+                "max:{$maxKb}",
+                'mimetypes:'.implode(',', $mimes),
+            ],
         ];
     }
 }
