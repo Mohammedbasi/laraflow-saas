@@ -137,6 +137,13 @@ LaraFlow follows a clean, production-oriented architecture:
 
 ---
 
+## 🔎 API Documentation
+
+A Postman collection is included to explore and test the API without a frontend.
+
+See:
+- `docs/postman/` — Postman collection and usage instructions
+
 ## 🚀 Getting Started (Development)
 
 ```bash
