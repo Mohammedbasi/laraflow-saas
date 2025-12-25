@@ -1,59 +1,149 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LaraFlow — Multi-Tenant SaaS Backend (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+LaraFlow is a **production-grade, API-first multi-tenant SaaS backend** built with Laravel.
+The project focuses on real-world backend engineering concerns such as tenant isolation,
+authorization, background processing, real-time updates, billing, and reporting.
 
-## About Laravel
+This project was designed intentionally beyond CRUD tutorials, following patterns commonly
+used in real SaaS products.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Single-database multi-tenancy** with strict tenant isolation
+- **API-first authentication** using Laravel Sanctum
+- **Role-based authorization** using Policies (Spatie Permission with Teams)
+- **Real-time collaboration** using Laravel Events & Broadcasting
+- **Background job processing** with queues, chaining, retries, and failure handling
+- **Scheduled reporting system** with PDF generation and email delivery
+- **Stripe billing integration** with subscription limits and webhooks
+- **Audit logging** for critical domain events
+- **Admin impersonation** for tenant support and debugging
+- **Private file storage** with secure download endpoints
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🧠 Architecture Highlights
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+LaraFlow follows a clean, production-oriented architecture:
 
-## Laravel Sponsors
+- **Tenant isolation by default**
+  - All tenant-owned models include `tenant_id`
+  - Global scopes ensure no cross-tenant data leaks
+- **Thin controllers**
+  - Controllers handle validation + authorization only
+  - Business logic lives in dedicated `Actions` and `Services`
+- **Policies over role middleware**
+  - Avoids Spatie Teams caching pitfalls
+  - Ensures reliable tenant-aware authorization
+- **Events for side effects only**
+  - Broadcasting, activity feeds, notifications
+- **Queue-safe jobs**
+  - No reliance on request context or middleware
+  - Deterministic inputs passed explicitly
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 🧩 Modules Overview
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Module A — Core SaaS Foundation
+- Authentication (register, login, tokens)
+- Tenant creation and ownership
+- Role & permission system (tenant roles + platform admin)
+- Invitations flow (email-based onboarding)
+- Admin panel with impersonation
+- Activity audit logging
 
-## Contributing
+### Module B — Billing & Subscription Limits
+- Stripe integration using Laravel Cashier
+- Free vs paid plan enforcement
+- Subscription lifecycle via webhooks
+- Seat limits enforced at business logic level
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Module C — Task Management
+- Projects & tasks with ordering (drag & drop)
+- Polymorphic comments
+- File attachments (private storage)
+- Activity logging for task events
 
-## Code of Conduct
+### Module D — Real-Time Updates
+- Task updates broadcasted per tenant
+- Batched drag-and-drop updates
+- Presence channels (who’s online)
+- Live activity feed via broadcasting
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Module E — Reporting & Performance
+- Weekly scheduled reports (console scheduler)
+- Heavy stats calculation via queued jobs
+- PDF generation (DomPDF)
+- Email delivery with retries
+- Idempotent report generation per tenant/week
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🔄 Background Processing
 
-## License
+- Database-backed queues (Windows-friendly)
+- Job chaining for ordered workflows
+- Failed job handling and retry support
+- Designed for Horizon in Linux-based production environments
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🔐 Security Considerations
+
+- Strict tenant isolation at query level
+- No public file URLs (private downloads only)
+- Rate limiting for sensitive endpoints
+- Authorization enforced via policies
+- Queue jobs isolated from request context
+
+---
+
+## 🧪 Testing Strategy
+
+- Pest for feature and integration tests
+- Tests cover:
+  - Tenant isolation
+  - Authorization rules
+  - Subscription limits
+  - Background job dispatching
+  - Business rule enforcement
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** Laravel (API-first)
+- **Auth:** Sanctum
+- **Authorization:** Policies + Spatie Permission (Teams)
+- **Queues:** Database queue (Horizon-ready)
+- **Realtime:** Laravel Broadcasting
+- **PDF:** DomPDF
+- **Billing:** Stripe + Laravel Cashier
+- **Database:** MySQL
+- **Testing:** Pest
+
+---
+
+## 🎯 What This Project Demonstrates
+
+- Designing a real SaaS backend beyond CRUD
+- Handling multi-tenancy safely in a single database
+- Writing queue-safe, production-ready jobs
+- Applying clean architecture patterns in Laravel
+- Thinking about scalability, failure modes, and operability
+
+---
+
+## 🚀 Getting Started (Development)
+
+```bash
+git clone https://github.com/Mohammedbasi/laraflow-saas.git
+cd laraflow-saas
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
