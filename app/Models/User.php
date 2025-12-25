@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password',
         'tenant_id',
         'is_active',
+        'is_manager',
     ];
 
     /**
@@ -50,6 +51,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'is_manager' => 'boolean',
         ];
     }
 }

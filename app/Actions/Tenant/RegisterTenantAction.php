@@ -28,6 +28,7 @@ class RegisterTenantAction
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
+                'is_manager' => true,
             ]);
 
             // 3) Update tenant owner_id
