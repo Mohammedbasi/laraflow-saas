@@ -16,7 +16,6 @@ class CalculateWeeklyTaskStatsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
-
     /**
      * Create a new job instance.
      */
@@ -26,7 +25,7 @@ class CalculateWeeklyTaskStatsJob implements ShouldQueue
         public string $weekStart,
         public string $weekEnd,
     ) {
-        //
+        $this->onQueue('reports');
     }
 
     /**

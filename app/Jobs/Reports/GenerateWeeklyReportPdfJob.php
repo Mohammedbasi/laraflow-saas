@@ -18,6 +18,7 @@ class GenerateWeeklyReportPdfJob implements ShouldQueue
 
     public int $tries = 3;
 
+
     /**
      * Create a new job instance.
      */
@@ -25,7 +26,7 @@ class GenerateWeeklyReportPdfJob implements ShouldQueue
         public int $reportId,
         public int $tenantId,
     ) {
-        //
+        $this->onQueue('reports');
     }
 
     /**
