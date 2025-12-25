@@ -1,11 +1,58 @@
-# Postman Setup
+# LaraFlow API — Postman Collection
 
-## Import
-- Import `LaraFlow.postman_collection.json`
-- Import `LaraFlow.local.postman_environment.example.json`
+This directory contains a Postman collection for testing and exploring the LaraFlow API.
 
-## Environment Variables
+The collection demonstrates:
+- Authentication flows
+- Multi-tenant isolation
+- Role-based authorization
+- Business rule enforcement
+- Background processing triggers
+
+---
+
+## 📦 Files
+
+- `LaraFlow.postman_collection.json`  
+  Complete API request collection.
+
+- `LaraFlow.postman_environment.json`  
+  Environment variables for local development.
+
+---
+
+## 🚀 How to Use
+
+### 1) Import into Postman
+- Open Postman
+- Click **Import**
+- Select both JSON files in this directory
+
+### 2) Configure environment
 Set:
-- `base_url` (ex: http://127.0.0.1:8000)
+- `base_url` → `http://localhost:8000/api/v1`
+- Other values are populated automatically after authentication
 
-Tokens are generated automatically after login requests.
+### 3) Authentication
+Run:
+- `Auth → Register` or `Auth → Login`
+
+The access token is automatically stored and reused.
+
+---
+
+## 🔐 Authorization Scenarios
+
+The collection includes requests that demonstrate:
+
+- Tenant-scoped resource access
+- Forbidden access across tenants (404 / 403)
+- Role-restricted actions
+- Admin-only endpoints
+
+---
+
+## 🧪 Notes
+
+- The API is backend-focused and designed for SPA or mobile clients.
+- Background jobs (reports, emails) require queue workers to be running.
