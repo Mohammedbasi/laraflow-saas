@@ -59,6 +59,12 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'reports' => [
+            'driver' => 'local',
+            'root' => storage_path('app/reports'),
+            'visibility' => 'private',
+            'throw' => true,
+        ],
 
     ],
 
